@@ -1,22 +1,22 @@
 package org.gojek
 
-import org.gojek.entities.domain.ParkingLot
+import org.gojek.entities.domain.ParkingLotImpl
 import spock.lang.Specification
 
 class CreateParkingLotSpec extends Specification {
     def "create a parking lot with capacity"() {
         expect:
-        lot.capacity == initCapacity
+        lot.totalCapacity == initCapacity
 
         where:
-        lot                        || initCapacity
-        ParkingLot.withCapacity(6) || 6
-        ParkingLot.withCapacity(4) || 4
+        lot                            || initCapacity
+        ParkingLotImpl.withCapacity(6) || 6
+        ParkingLotImpl.withCapacity(4) || 4
     }
 
     def "creating lot with invalid capacity should fail"() {
         when:
-        ParkingLot.withCapacity(-1)
+        ParkingLotImpl.withCapacity(-1)
 
         then:
         def err = thrown(expectedException)
@@ -34,14 +34,14 @@ class CreateParkingLotSpec extends Specification {
         lot.availableCapacity == initCapacity
 
         where:
-        lot                        || initCapacity
-        ParkingLot.withCapacity(6) || 6
-        ParkingLot.withCapacity(4) || 4
+        lot                            || initCapacity
+        ParkingLotImpl.withCapacity(6) || 6
+        ParkingLotImpl.withCapacity(4) || 4
     }
 
     def "next available slot must be the 1st slot"() {
         expect:
-        ParkingLot.withCapacity(initCapacity as int).nextAvailableSlot() == nextSlot
+        ParkingLotImpl.withCapacity(initCapacity as int).nextAvailableSlot() == nextSlot
 
         where:
         initCapacity << 6
@@ -50,7 +50,7 @@ class CreateParkingLotSpec extends Specification {
 
     def "occupied capacity must be equal to the initial capacity"() {
         expect:
-        ParkingLot.withCapacity(initCapacity as int).availableCapacity == initCapacity
+        ParkingLotImpl.withCapacity(initCapacity as int).availableCapacity == initCapacity
 
         where:
         initCapacity << 6
