@@ -1,6 +1,8 @@
 package org.gojek.entities.domain;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
@@ -39,11 +41,6 @@ public class ParkingLotImpl implements ParkingLot {
     }
 
     @Override
-    public int getOccupiedCapacity() {
-        return capacity - availableSlots.size();
-    }
-
-    @Override
     public int nextAvailableSlot() {
         return Optional.ofNullable(availableSlots.peek()).orElse(0);
     }
@@ -73,5 +70,25 @@ public class ParkingLotImpl implements ParkingLot {
         return spot.getSpotNumber();
     }
 
+    @Override
+    public List<String> getRegNumberOfCarsWithColor(String color) {
+        return occupiedSlots.values().stream()
+                .map(ParkingSpot::getCar)
+                .filter(c -> c.getColor().equals(color))
+                .map(Car::getRegistrationNumber)
+                .collect(Collectors.toList());
+    }
 
+    @Override
+    public int getSlotNumberOfCarWithRegistrationNumber(Car car) {
+        return occupiedSlotsByRegNumber.get(car.getRegistrationNumber()).getSpotNumber();
+    }
+
+    @Override
+    public List<Integer> getSlotNumberOfCarWithColor(String color) {
+        return occupiedSlots.values().stream()
+                .filter(ps -> ps.getCar().getColor().equals(color))
+                .map(ParkingSpot::getSpotNumber)
+                .collect(Collectors.toList());
+    }
 }

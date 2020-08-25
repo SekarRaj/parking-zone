@@ -14,6 +14,14 @@ public class Car implements Vehicle {
         return new Car(registrationNumber, color);
     }
 
+    public static Car withRegistrationNumber(String registrationNumber) {
+        return new Car(registrationNumber, "Unknown");
+    }
+
+    public static Car withColor(String color) {
+        return new Car("Unknown", color);
+    }
+
     public String getRegistrationNumber() {
         return registrationNumber;
     }
