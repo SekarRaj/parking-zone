@@ -9,14 +9,16 @@ public interface ParkingLot {
 
     int nextAvailableSlot();
 
-    boolean parkCar(Car car);
+    String parkCar(Car car);
 
-    int leaveParking(Car car);
+    int leaveParking(int slotNumber);
 
     List<String> getRegNumberOfCarsWithColor(String color);
 
     int getSlotNumberOfCarWithRegistrationNumber(Car car);
 
     List<Integer> getSlotNumberOfCarWithColor(String color);
+
+    String status();
 }
 

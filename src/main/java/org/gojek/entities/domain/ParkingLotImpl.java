@@ -1,6 +1,5 @@
 package org.gojek.entities.domain;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,24 +45,25 @@ public class ParkingLotImpl implements ParkingLot {
     }
 
     @Override
-    public boolean parkCar(Car car) {
+    public String parkCar(Car car) {
         assert getAvailableCapacity() > 0 : "Sorry, parking lot is full";
+        int spotNumber;
         synchronized (this) {
-            int spotNumber = availableSlots.remove();
+            spotNumber = availableSlots.remove();
             ParkingSpot spot = ParkingSpot.withSpotNumberAndCar(spotNumber, car);
             occupiedSlots.put(spotNumber, spot);
             occupiedSlotsByRegNumber.put(car.getRegistrationNumber(), spot);
         }
-        return true;
+        return String.format("Allocated slot number: %d", spotNumber);
     }
 
     @Override
-    public int leaveParking(Car car) {
-        assert occupiedSlotsByRegNumber.containsKey(car.getRegistrationNumber()) : "Car is not in the parking lot";
+    public int leaveParking(int slotNumber) {
+        assert occupiedSlots.containsKey(slotNumber) : "Parking lot is empty";
         ParkingSpot spot;
         synchronized (this) {
-            spot = occupiedSlotsByRegNumber.remove(car.getRegistrationNumber());
-            occupiedSlots.remove(spot.getSpotNumber());
+            spot = occupiedSlots.remove(slotNumber);
+            occupiedSlotsByRegNumber.remove(spot.getCar().getRegistrationNumber());
             availableSlots.add(spot.getSpotNumber());
         }
 
@@ -90,5 +90,29 @@ public class ParkingLotImpl implements ParkingLot {
                 .filter(ps -> ps.getCar().getColor().equals(color))
                 .map(ParkingSpot::getSpotNumber)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String status() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Slot No.\t Registration No \t Colour\n");
+        String cars = occupiedSlots.values().stream()
+                .map(ps -> {
+                    Car c = ps.getCar();
+                    return String.format("%s\t%s\t%s", ps.getSpotNumber(), c.getRegistrationNumber(), c.getColor());
+                })
+                .collect(Collectors.joining("\n"));
+        sb.append(cars);
+        return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "ParkingLotImpl{" +
+                "capacity=" + capacity +
+                ", occupiedSlots=" + occupiedSlots +
+                ", occupiedSlotsByRegNumber=" + occupiedSlotsByRegNumber +
+                ", availableSlots=" + availableSlots +
+                '}';
     }
 }

@@ -17,7 +17,26 @@ dependencies {
     testImplementation "org.spockframework:spock-core"
 }
 
-test{
+test {
     useJUnitPlatform()
 }
 
+
+jar {
+    manifest {
+        attributes "Main-Class": "org.gojek.entities.cli.CommandLine"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+task customFatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': "org.gojek.entities.cli.CommandLine"
+    }
+    archiveBaseName = 'uber-jar'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}

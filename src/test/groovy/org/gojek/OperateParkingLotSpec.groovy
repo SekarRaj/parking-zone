@@ -63,11 +63,10 @@ class OperateParkingLotSpec extends Specification {
         lot.availableCapacity == initialCapacity
 
         when:
-        def firstCar = Car.withRegistrationNumberAndColor("KA-01-HH-1234", "White")
-        lot.parkCar(firstCar)
+        lot.parkCar(Car.withRegistrationNumberAndColor("KA-01-HH-1234", "White"))
         lot.parkCar(Car.withRegistrationNumberAndColor("KA-01-HH-9999", "White"))
         lot.parkCar(Car.withRegistrationNumberAndColor("KA-01-BB-0001", "Black"))
-        lot.leaveParking(firstCar);
+        lot.leaveParking(1);
 
         then:
         lot.nextAvailableSlot() == 1
@@ -84,7 +83,7 @@ class OperateParkingLotSpec extends Specification {
         lot.parkCar(firstCar)
         lot.parkCar(secondCar)
         lot.parkCar(thirdCar);
-        lot.leaveParking(secondCar);
+        lot.leaveParking(2);
 
         then:
         lot.nextAvailableSlot() == 2
