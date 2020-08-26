@@ -1,6 +1,6 @@
 package org.gojek.entities.domain;
 
-public class Car implements Vehicle {
+public class Car{
     private final String registrationNumber;
     private final String color;
 

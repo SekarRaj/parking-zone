@@ -46,26 +46,23 @@ public class ParkingLotImpl implements ParkingLot {
 
     @Override
     public String parkCar(Car car) {
-        assert getAvailableCapacity() > 0 : "Sorry, parking lot is full";
-        int spotNumber;
-        synchronized (this) {
-            spotNumber = availableSlots.remove();
-            ParkingSpot spot = ParkingSpot.withSpotNumberAndCar(spotNumber, car);
-            occupiedSlots.put(spotNumber, spot);
-            occupiedSlotsByRegNumber.put(car.getRegistrationNumber(), spot);
+        if (getAvailableCapacity() <= 0) {
+            return "Sorry, parking lot is full";
         }
+
+        int spotNumber = availableSlots.remove();
+        ParkingSpot spot = ParkingSpot.withSpotNumberAndCar(spotNumber, car);
+        occupiedSlots.put(spotNumber, spot);
+        occupiedSlotsByRegNumber.put(car.getRegistrationNumber(), spot);
         return String.format("Allocated slot number: %d", spotNumber);
     }
 
     @Override
     public int leaveParking(int slotNumber) {
         assert occupiedSlots.containsKey(slotNumber) : "Parking lot is empty";
-        ParkingSpot spot;
-        synchronized (this) {
-            spot = occupiedSlots.remove(slotNumber);
-            occupiedSlotsByRegNumber.remove(spot.getCar().getRegistrationNumber());
-            availableSlots.add(spot.getSpotNumber());
-        }
+        ParkingSpot spot = occupiedSlots.remove(slotNumber);
+        occupiedSlotsByRegNumber.remove(spot.getCar().getRegistrationNumber());
+        availableSlots.add(spot.getSpotNumber());
 
         return spot.getSpotNumber();
     }
